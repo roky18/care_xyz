@@ -1,32 +1,27 @@
 import Banner from "@/components/Banner";
 import Services from "@/components/Services";
-import { collections, dbConnect } from "@/lib/dbConnect";
+import { getAllServices } from "@/actions/server/services";
 
 export default async function Home() {
-  const serviceCollection = dbConnect(collections.SERVICES);
-  const rawServices = await serviceCollection.find({}).toArray();
-
-  const services = rawServices.map((service) => ({
-    ...service,
-    _id: service._id.toString(),
-  }));
+  const services = await getAllServices();
 
   return (
     <div className="flex flex-col w-full bg-base-100 font-sans dark:bg-black min-h-screen">
       <main className="w-full pb-10">
         {/* Banner Section */}
-        <section className="w-full flex justify-center py-8">
-          <Banner />
-        </section>
+        <Banner />
 
         {/* Services Section */}
-        {services.length > 0 ? (
-          <Services services={services} />
-        ) : (
-          <div className="text-center py-10">
-            <p>No services found. Please seed your database.</p>
-          </div>
-        )}
+        <section>
+          {services.length > 0 ? (
+            <Services services={services} />
+          ) : (
+            <div className="text-center py-20">
+              <span className="loading loading-spinner loading-lg text-emerald-600"></span>
+              <p className="mt-4 text-gray-500">Connecting to database...</p>
+            </div>
+          )}
+        </section>
       </main>
     </div>
   );

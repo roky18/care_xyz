@@ -7,8 +7,11 @@ const Services = ({ services }) => {
     <section className="py-16 w-11/12 max-w-7xl mx-auto">
       <div className="text-center mb-12">
         <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">
-          Our Care <span className="text-emerald-600">Services</span>
+          Our Care  <span className="text-emerald-600">Services</span>
         </h2>
+        <p className="text-gray-500 mt-2">
+              Explore our wide range of professional care solutions
+            </p>
         <div className="w-20 h-1 bg-emerald-500 mx-auto mt-4 rounded-full"></div>
       </div>
 
@@ -37,7 +40,7 @@ const Services = ({ services }) => {
               <div className="flex justify-between items-center mt-4">
                 <span className="text-xl font-bold text-emerald-600">
                   ৳{service.price}{" "}
-                  <span className="text-xs text-gray-500">/Day</span>
+                  <span className="text-md text-gray-500">/ Day</span>
                 </span>
                 <div className="card-actions">
                   <Link

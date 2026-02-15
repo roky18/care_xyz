@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const Banner = () => {
   return (
-    <section className="relative w-11/12 max-w-7xl mx-auto h-[500px] md:h-[600px] flex items-center justify-center overflow-hidden rounded-3xl shadow-2xl">
+    <section className="relative w-11/12 max-w-7xl mx-auto h-[500px] md:h-[600px] flex items-center justify-center overflow-hidden rounded-3xl shadow-2xl mt-8">
       {/* Background Image */}
       <Image
         src="/banner.jpg"
