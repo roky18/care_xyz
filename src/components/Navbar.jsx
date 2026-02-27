@@ -2,19 +2,30 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { usePathname } from "next/navigation"; 
+import { usePathname } from "next/navigation";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname(); 
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const pathname = usePathname();
+  const user =
+    typeof window !== "undefined" && localStorage.getItem("care_user")
+      ? JSON.parse(localStorage.getItem("care_user"))
+      : null;
+  const userName = user?.name || "User";
 
-  const isLoggedIn = false;
+  const isLoggedIn = Boolean(user);
 
- 
+  const handleLogout = () => {
+    localStorage.removeItem("care_user");
+    setIsProfileOpen(false);
+    setIsOpen(false);
+  };
+
   const linkClass = (path) =>
     `font-medium transition-colors ${
       pathname === path
-        ? "text-emerald-600 border-b-2 border-emerald-600" 
+        ? "text-emerald-600 border-b-2 border-emerald-600"
         : "text-gray-700 hover:text-emerald-600"
     }`;
 
@@ -35,7 +46,7 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Links  */}
+          {/* Desktop Links */}
           <div className="hidden md:flex flex-grow justify-center space-x-10 items-center">
             <Link href="/" className={linkClass("/")}>
               Home
@@ -43,28 +54,64 @@ const Navbar = () => {
             <Link href="/services" className={linkClass("/services")}>
               Services
             </Link>
-            {isLoggedIn && (
-              <Link href="/my-bookings" className={linkClass("/my-bookings")}>
-                My Bookings
-              </Link>
-            )}
             <Link href="/about" className={linkClass("/about")}>
               About
             </Link>
           </div>
 
-          {/* Login/Logout Toggle */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center">
             {isLoggedIn ? (
-              <button
-                className="bg-red-500 text-white px-5 py-2 rounded-full hover:bg-red-600 transition shadow-sm font-medium"
-                onClick={() => console.log("Logout Logic Here")}
-              >
-                Logout
-              </button>
+              /* --- Logged In --- */
+              <div className="relative">
+                <button
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className="flex items-center space-x-2 focus:outline-none border border-transparent hover:border-emerald-200 p-1 rounded-full transition"
+                >
+                  <span className="text-gray-700 font-medium ml-2">
+                    {userName}
+                  </span>
+                  <div className="h-10 w-10 rounded-full bg-emerald-100 border-2 border-emerald-600 flex items-center justify-center overflow-hidden">
+                    {user.image ? (
+                      <Image
+                        src={user.image}
+                        alt="User"
+                        width={40}
+                        height={40}
+                      />
+                    ) : (
+                      <span className="text-emerald-700 font-bold">
+                        {userName.charAt(0)}
+                      </span>
+                    )}
+                  </div>
+                </button>
+
+                {isProfileOpen && (
+                  <div className="absolute right-0 mt-3 w-48 bg-white border border-gray-100 rounded-lg shadow-xl py-2 z-50">
+                    <Link
+                      href="/my-bookings"
+                      className="block px-4 py-2 text-gray-700 hover:bg-emerald-50"
+                      onClick={() => setIsProfileOpen(false)}
+                    >
+                      My Bookings
+                    </Link>
+                    <hr className="my-1 border-gray-100" />
+                    <button
+                      className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 font-medium"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
-              <div className="flex items-center space-x-3">
-                <Link href="/login" className={linkClass("/login")}>
+              /* --- if NOT Logged In --- */
+              <div className="flex items-center space-x-4">
+                <Link
+                  href="/login"
+                  className="text-gray-700 hover:text-emerald-600 font-medium"
+                >
                   Login
                 </Link>
                 <Link
@@ -77,11 +124,11 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Menu Button */}
+          {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-700 hover:text-emerald-600 focus:outline-none"
+              className="text-gray-700 focus:outline-none"
             >
               <svg
                 className="h-7 w-7"
@@ -110,31 +157,65 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/*  Menu Overlay */}
+      {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 py-6 space-y-4 px-6 shadow-xl">
+        <div className="md:hidden bg-white border-t border-gray-100 py-6 px-6 space-y-4 shadow-xl">
           <Link
             href="/"
             onClick={() => setIsOpen(false)}
-            className={`block text-lg border-b pb-2 ${pathname === "/" ? "text-emerald-600 font-bold" : "text-gray-800"}`}
+            className="block text-lg border-b pb-2"
           >
             Home
           </Link>
           <Link
             href="/services"
             onClick={() => setIsOpen(false)}
-            className={`block text-lg border-b pb-2 ${pathname === "/services" ? "text-emerald-600 font-bold" : "text-gray-800"}`}
+            className="block text-lg border-b pb-2"
           >
             Services
           </Link>
           <Link
             href="/about"
             onClick={() => setIsOpen(false)}
-            className={`block text-lg border-b pb-2 ${pathname === "/about" ? "text-emerald-600 font-bold" : "text-gray-800"}`}
+            className="block text-lg border-b pb-2"
           >
             About
           </Link>
-          
+
+          {isLoggedIn ? (
+            <>
+              <Link
+                href="/my-bookings"
+                onClick={() => setIsOpen(false)}
+                className="block text-lg border-b pb-2"
+              >
+                My Bookings
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="w-full text-left text-lg text-red-600 font-bold py-2"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <div className="flex flex-col space-y-3 pt-2">
+              <Link
+                href="/login"
+                onClick={() => setIsOpen(false)}
+                className="text-center py-2 border border-emerald-600 rounded-full text-emerald-600 font-medium"
+              >
+                Login
+              </Link>
+              <Link
+                href="/register"
+                onClick={() => setIsOpen(false)}
+                className="text-center py-2 bg-emerald-600 rounded-full text-white font-medium"
+              >
+                Register
+              </Link>
+            </div>
+          )}
         </div>
       )}
     </nav>
