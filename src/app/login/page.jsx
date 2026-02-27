@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 
 
 const LoginPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -37,9 +38,10 @@ const LoginPage = () => {
         return;
       }
 
-      localStorage.setItem("care_user", JSON.stringify(data.user));
       alert("Login successful!");
-      router.push("/");
+      const redirectPath = searchParams.get("redirect") || "/";
+      router.push(redirectPath);
+      router.refresh();
     } catch (err) {
       setError("Login failed. Try again.");
     } finally {
@@ -148,7 +150,11 @@ const LoginPage = () => {
         <p className="mt-6 text-center text-sm text-gray-600">
           Don t have an account?{" "}
           <Link
-            href="/register"
+            href={
+              searchParams.get("redirect")
+                ? `/register?redirect=${encodeURIComponent(searchParams.get("redirect"))}`
+                : "/register"
+            }
             className="font-bold text-emerald-600 hover:text-emerald-500 underline-offset-4 hover:underline"
           >
             Register Now

@@ -1,25 +1,42 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loadingUser, setLoadingUser] = useState(true);
+  const router = useRouter();
   const pathname = usePathname();
-  const user =
-    typeof window !== "undefined" && localStorage.getItem("care_user")
-      ? JSON.parse(localStorage.getItem("care_user"))
-      : null;
   const userName = user?.name || "User";
 
   const isLoggedIn = Boolean(user);
 
-  const handleLogout = () => {
-    localStorage.removeItem("care_user");
+  useEffect(() => {
+    const loadMe = async () => {
+      try {
+        const res = await fetch("/api/me", { cache: "no-store" });
+        const data = await res.json();
+        setUser(data.user || null);
+      } catch {
+        setUser(null);
+      } finally {
+        setLoadingUser(false);
+      }
+    };
+
+    loadMe();
+  }, [pathname]);
+
+  const handleLogout = async () => {
+    await fetch("/api/logout", { method: "POST" });
+    setUser(null);
     setIsProfileOpen(false);
     setIsOpen(false);
+    router.refresh();
   };
 
   const linkClass = (path) =>
@@ -60,7 +77,7 @@ const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center">
-            {isLoggedIn ? (
+            {loadingUser ? null : isLoggedIn ? (
               /* --- Logged In --- */
               <div className="relative">
                 <button
@@ -182,7 +199,7 @@ const Navbar = () => {
             About
           </Link>
 
-          {isLoggedIn ? (
+          {loadingUser ? null : isLoggedIn ? (
             <>
               <Link
                 href="/my-bookings"

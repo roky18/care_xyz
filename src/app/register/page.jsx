@@ -2,10 +2,11 @@
 import Link from "next/link";
 import { useState } from "react";
 import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const RegisterPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -48,7 +49,11 @@ const RegisterPage = () => {
 
       if (res.ok) {
         alert("Registration Successful! Please Login.");
-        router.push("/login");
+        const redirectPath = searchParams.get("redirect");
+        const loginPath = redirectPath
+          ? `/login?redirect=${encodeURIComponent(redirectPath)}`
+          : "/login";
+        router.push(loginPath);
       } else {
         setError(data.message);
       }
@@ -210,7 +215,11 @@ const RegisterPage = () => {
         <p className="mt-6 text-center text-sm text-gray-600">
           Already have an account?{" "}
           <Link
-            href="/login"
+            href={
+              searchParams.get("redirect")
+                ? `/login?redirect=${encodeURIComponent(searchParams.get("redirect"))}`
+                : "/login"
+            }
             className="font-bold text-emerald-600 hover:text-emerald-500 underline-offset-4 hover:underline transition-all"
           >
             Login here

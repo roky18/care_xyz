@@ -44,7 +44,7 @@ const Services = ({ services }) => {
                 </span>
                 <div className="card-actions">
                   <Link
-                    href={`/services/${service._id}`}
+                    href={`/service/${service._id}`}
                     className="btn btn-sm bg-emerald-600 hover:bg-emerald-700 text-white border-none rounded-lg"
                   >
                     View Details

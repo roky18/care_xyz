@@ -1,4 +1,5 @@
 import { dbConnect, collections } from "@/lib/dbConnect";
+import { createSessionToken, setSessionCookie, verifyPassword } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export async function POST(request) {
@@ -8,12 +9,18 @@ export async function POST(request) {
 
     const user = await userCollection.findOne({ email });
 
-    if (!user || user.password !== password) {
+    if (!user || !verifyPassword(password, user.password)) {
       return NextResponse.json({ message: "Invalid credentials" }, { status: 401 });
     }
 
     const { password: _, ...userData } = user;
-    return NextResponse.json({ message: "Login success", user: userData }, { status: 200 });
+    const response = NextResponse.json(
+      { message: "Login success", user: userData },
+      { status: 200 }
+    );
+    const token = createSessionToken(userData);
+    setSessionCookie(response, token);
+    return response;
 
   } catch (error) {
     return NextResponse.json({ message: "Server Error" }, { status: 500 });
