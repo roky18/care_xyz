@@ -1,10 +1,11 @@
 "use client";
+import { Suspense } from "react";
 import Link from "next/link";
 import { useState } from "react";
 import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useRouter, useSearchParams } from "next/navigation";
 
-const RegisterPage = () => {
+const RegisterContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
@@ -236,4 +237,10 @@ const RegisterPage = () => {
   );
 };
 
-export default RegisterPage;
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="min-h-[calc(100vh-64px)] bg-gray-50" />}>
+      <RegisterContent />
+    </Suspense>
+  );
+}
