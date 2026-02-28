@@ -64,6 +64,11 @@ const RegisterPage = () => {
     }
   };
 
+  const handleGoogleSignup = () => {
+    const redirectPath = searchParams.get("redirect") || "/";
+    window.location.href = `/api/auth/google/start?redirect=${encodeURIComponent(redirectPath)}`;
+  };
+
   return (
     <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50 px-4 py-12">
       <div className="max-w-2xl w-full space-y-8 bg-white p-8 md:p-10 rounded-2xl shadow-lg border border-gray-100">
@@ -203,6 +208,7 @@ const RegisterPage = () => {
           <div className="mt-6">
             <button
               type="button"
+              onClick={handleGoogleSignup}
               className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border border-gray-300 rounded-full shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all"
             >
               <FaGoogle className="text-red-500 text-lg" />

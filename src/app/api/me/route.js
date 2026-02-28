@@ -15,6 +15,7 @@ export async function GET(request) {
         _id: session.sub,
         email: session.email,
         name: session.name,
+        image: session.image || null,
       },
     },
     { status: 200 }

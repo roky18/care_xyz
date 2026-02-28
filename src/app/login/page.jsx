@@ -50,7 +50,8 @@ const LoginPage = () => {
   };
 
   const handleGoogleLogin = () => {
-    console.log("Google Login Clicked");
+    const redirectPath = searchParams.get("redirect") || "/";
+    window.location.href = `/api/auth/google/start?redirect=${encodeURIComponent(redirectPath)}`;
   };
 
   return (

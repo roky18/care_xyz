@@ -47,6 +47,7 @@ export function createSessionToken(user) {
       sub: user._id?.toString(),
       email: user.email,
       name: user.name,
+      image: user.image || null,
       exp: Math.floor(Date.now() / 1000) + ONE_WEEK_SECONDS,
     })
   );
